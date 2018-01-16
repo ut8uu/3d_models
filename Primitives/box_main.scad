@@ -60,20 +60,60 @@ module box_lid_163028402DBA46F1A57207ED46D87103()
     ww = $box_wall_thickness;
     h2 = $box_lid_skirt;
     t = 0.1; // tolerance
+    bsw = $box_stand_screw_diameter + 6;
 
     translate([5,0,0])
     {
-        cube([w,d,ww]);
         difference()
         {
-            translate([ww+t,ww+t,ww])
-                cube ([w-ww*2-t*2, d-ww*2-t*2, h2]);
-            translate([ww*2,ww*2,ww-0.9])
-                cube([w-ww*4, d-ww*4, h2+2]);
+            union()
+            {
+                cube([w,d,ww]);
+                difference()
+                {
+                    translate([ww+t,ww+t,ww]) cube ([w-ww*2-t*2, d-ww*2-t*2, h2]);
+                    translate([ww*2,ww*2,ww-0.9]) cube([w-ww*4, d-ww*4, h2+2]);
+                }
+                translate([2*ww, 2*ww, ww]) cube([bsw, bsw,5*ww]);
+                translate([w-2*ww-bsw, 2*ww, ww]) cube([bsw, bsw,5*ww]);
+                translate([2*ww, d-bsw-2*ww, ww]) cube([bsw, bsw,5*ww]);
+                translate([w-2*ww-bsw, d-bsw-2*ww, ww]) cube([bsw, bsw,5*ww]);
+            }
+            if ($box_stand)
+            {
+                holes_in_lid(bsw, ww);
+            }
         }
     }
 }
 
+module holes_in_lid(bsw, ww)
+{
+    w = $box_w;
+    h = $box_h;
+    d = $box_d;
+
+    // hole in lid for th screw head
+    cr1 = $box_stand_screw_diameter/2;
+    
+    translate([bsw/2+cr1, bsw/2+cr1, -1]) hole_for_screw_head();
+    translate([w -bsw/2 - cr1, bsw/2+cr1, -1]) hole_for_screw_head();
+    translate([bsw/2+cr1, d-bsw/2-cr1, -1]) hole_for_screw_head();
+    translate([w -bsw/2 - cr1, d-bsw/2-cr1, -1]) hole_for_screw_head();
+}
+
+module hole_for_screw_head()
+{
+    ww = $box_wall_thickness;
+    
+    cr0 = ($box_stand_screw_diameter + 4)/2;
+    cr1 = $box_stand_screw_diameter/2;
+    ch0 = ww+2;
+    ch1 = $box_lid_skirt + ww + 2;
+
+    cylinder(ch0, cr0, cr0);
+    cylinder(ch1, cr1, cr1);
+}
 
 module box_walls_9D04E7778521468E8EBB86C1C622761C()
 {
