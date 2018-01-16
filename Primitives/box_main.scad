@@ -88,24 +88,20 @@ module box_walls_9D04E7778521468E8EBB86C1C622761C()
             translate([ww,ww,ww])
                 cube([w-ww*2, d-ww*2, h]);
         }
+        bsw = $box_stand_screw_diameter + 6 + 2*ww;
+        bsh = $box_h-$box_lid_skirt;
         if ($box_stand){
-            bsw = $box_stand_screw_diameter + 6 + 2*ww;
-            box_stand_6611BC6372B84EC5B78C8F90C1A866CB(0, 0, 0);
-            box_stand_6611BC6372B84EC5B78C8F90C1A866CB(w-bsw, 0, 0);
-            box_stand_6611BC6372B84EC5B78C8F90C1A866CB(0, d-bsw, 0);
-            box_stand_6611BC6372B84EC5B78C8F90C1A866CB(w-bsw, d-bsw, 0);
+            box_stand_6611BC6372B84EC5B78C8F90C1A866CB(0, 0, 0, bsh);
+            box_stand_6611BC6372B84EC5B78C8F90C1A866CB(w-bsw, 0, 0, bsh);
+            box_stand_6611BC6372B84EC5B78C8F90C1A866CB(0, d-bsw, 0, bsh);
+            box_stand_6611BC6372B84EC5B78C8F90C1A866CB(w-bsw, d-bsw, 0, bsh);
         }
     }
     
 }
 
-module box_stands_6611BC6372B84EC5B78C8F90C1A866CB(dx, dy, dz)
+module box_stand_6611BC6372B84EC5B78C8F90C1A866CB(dx, dy, dz, h)
 {
-}
-
-module box_stand_6611BC6372B84EC5B78C8F90C1A866CB(dx, dy, dz)
-{
-    h = $box_h-$box_lid_skirt;
     ww = $box_wall_thickness;
     w = $box_stand_screw_diameter + 6;
     r = $box_stand_screw_diameter/2;
