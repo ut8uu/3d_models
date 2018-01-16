@@ -39,6 +39,9 @@ if (box_demo)
     $box_w = 50;
     $box_d = 60;
     $box_wall_thickness = 1;
+    $box_stand = true;
+    $box_stand_screw_diameter = 3;
+    $box_lid_skirt = 5;
     
     box_main();
 }
@@ -55,16 +58,17 @@ module box_lid_163028402DBA46F1A57207ED46D87103()
     h = $box_h;
     d = $box_d;
     ww = $box_wall_thickness;
-    h2 = 5;
+    h2 = $box_lid_skirt;
+    t = 0.1; // tolerance
 
     translate([5,0,0])
     {
         cube([w,d,ww]);
         difference()
         {
-            translate([ww,ww,ww])
-                cube ([w-ww*2, d-ww*2, h2]);
-            translate([ww*2,ww*2,ww-1])
+            translate([ww+t,ww+t,ww])
+                cube ([w-ww*2-t*2, d-ww*2-t*2, h2]);
+            translate([ww*2,ww*2,ww-0.9])
                 cube([w-ww*4, d-ww*4, h2+2]);
         }
     }
@@ -84,7 +88,34 @@ module box_walls_9D04E7778521468E8EBB86C1C622761C()
             translate([ww,ww,ww])
                 cube([w-ww*2, d-ww*2, h]);
         }
+        if ($box_stand){
+            bsw = $box_stand_screw_diameter + 6 + 2*ww;
+            box_stand_6611BC6372B84EC5B78C8F90C1A866CB(0, 0, 0);
+            box_stand_6611BC6372B84EC5B78C8F90C1A866CB(w-bsw, 0, 0);
+            box_stand_6611BC6372B84EC5B78C8F90C1A866CB(0, d-bsw, 0);
+            box_stand_6611BC6372B84EC5B78C8F90C1A866CB(w-bsw, d-bsw, 0);
+        }
     }
+    
+}
+
+module box_stands_6611BC6372B84EC5B78C8F90C1A866CB(dx, dy, dz)
+{
+}
+
+module box_stand_6611BC6372B84EC5B78C8F90C1A866CB(dx, dy, dz)
+{
+    h = $box_h-$box_lid_skirt;
+    ww = $box_wall_thickness;
+    w = $box_stand_screw_diameter + 6;
+    r = $box_stand_screw_diameter/2;
+
+    translate([dx+ww,dy+ww,dz])
+        difference(){
+            cube([w,w,h]);
+            translate([w/2, w/2, h/2])
+                cylinder(h/2+1,r,r);
+        }
 }
 
 
