@@ -26,6 +26,9 @@
 // $box_h - height (z)
 // $box_wall_thickness - thickness of the box' wall
 
+include <screw_stand.scad>
+include <screws.scad>
+
 // set the variable below to see the box in action
 box_demo = true;
 
@@ -41,7 +44,7 @@ if (box_demo)
     $box_wall_thickness = 1;
     $box_stand = true;
     $box_stand_screw_diameter = 3;
-    $box_lid_skirt = 5;
+    $box_lid_skirt = 3;
     
     box_main();
 }
@@ -62,22 +65,38 @@ module box_lid_163028402DBA46F1A57207ED46D87103()
     t = 0.1; // tolerance
     bsw = $box_stand_screw_diameter + 6;
 
+    bsh = h2-t; // box stand height
+
     translate([5,0,0])
     {
         difference()
         {
             union()
             {
-                cube([w,d,ww]);
-                difference()
+                union()
                 {
-                    translate([ww+t,ww+t,ww]) cube ([w-ww*2-t*2, d-ww*2-t*2, h2]);
-                    translate([ww*2,ww*2,ww-0.9]) cube([w-ww*4, d-ww*4, h2+2]);
+                    cube([w,d,ww]);
+                    difference()
+                    {
+                        translate([ww+t,ww+t,ww]) cube ([w-ww*2-t, d-ww*2-t, bsh]);
+                        translate([ww*2,ww*2,ww-0.9]) cube([w-ww*4, d-ww*4, bsh+2]);
+                    }
                 }
-                translate([2*ww, 2*ww, ww]) cube([bsw, bsw,5*ww]);
-                translate([w-2*ww-bsw, 2*ww, ww]) cube([bsw, bsw,5*ww]);
-                translate([2*ww, d-bsw-2*ww, ww]) cube([bsw, bsw,5*ww]);
-                translate([w-2*ww-bsw, d-bsw-2*ww, ww]) cube([bsw, bsw,5*ww]);
+                if ($box_stand){
+                    bsw = $box_stand_screw_diameter + 6;
+                    bsdx = bsw/2+ww+t;
+                    bsdy = bsw/2+ww+t;
+
+                    translate([bsdx,bsdy,0]) 
+                        screw_stand("round", bsw, bsh+ww, $box_stand_screw_diameter);
+                    translate([w-bsdx,bsdy,0]) 
+                        screw_stand("round", bsw, bsh+ww, $box_stand_screw_diameter);
+                    
+                    translate([bsdx,d-bsdy,0]) 
+                        screw_stand("round", bsw, bsh+ww, $box_stand_screw_diameter);
+                    translate([w-bsdx,d-bsdy,0]) 
+                        screw_stand("round", bsw, bsh+ww, $box_stand_screw_diameter);
+                }
             }
             if ($box_stand)
             {
@@ -90,16 +109,17 @@ module box_lid_163028402DBA46F1A57207ED46D87103()
 module holes_in_lid(bsw, ww)
 {
     w = $box_w;
-    h = $box_h;
     d = $box_d;
 
-    // hole in lid for th screw head
-    cr1 = $box_stand_screw_diameter/2;
+    t = 0.1;
     
-    translate([bsw/2+cr1, bsw/2+cr1, -1]) hole_for_screw_head();
-    translate([w -bsw/2 - cr1, bsw/2+cr1, -1]) hole_for_screw_head();
-    translate([bsw/2+cr1, d-bsw/2-cr1, -1]) hole_for_screw_head();
-    translate([w -bsw/2 - cr1, d-bsw/2-cr1, -1]) hole_for_screw_head();
+    bsdx = bsw/2+ww+t;
+    bsdy = bsw/2+ww+t;
+    
+    translate([bsdx, bsdy, -1]) hole_for_screw_head();
+    translate([w-bsdx, bsdy, -1]) hole_for_screw_head();
+    translate([bsdx, d-bsdy, -1]) hole_for_screw_head();
+    translate([w-bsdx, d-bsdy, -1]) hole_for_screw_head();
 }
 
 module hole_for_screw_head()
@@ -108,19 +128,20 @@ module hole_for_screw_head()
     
     cr0 = ($box_stand_screw_diameter + 4)/2;
     cr1 = $box_stand_screw_diameter/2;
-    ch0 = ww+2;
-    ch1 = $box_lid_skirt + ww + 2;
+    ch0 = ww+2+0.1;
+    ch1 = $box_lid_skirt + ww + 2 + 0.1;
 
-    cylinder(ch0, cr0, cr0);
-    cylinder(ch1, cr1, cr1);
+    rotate([0, 270, 90])
+    screw_hole(cr0, cr1, ch0, ch1);
 }
 
 module box_walls_9D04E7778521468E8EBB86C1C622761C()
 {
-    w = $box_w;
+    ww = $box_wall_thickness;
+    w = $box_w - ww;
     h = $box_h;
     d = $box_d;
-    ww = $box_wall_thickness;
+    t = 0.1;
     translate([-5-w,0,0]){
         difference()
         {
@@ -128,30 +149,24 @@ module box_walls_9D04E7778521468E8EBB86C1C622761C()
             translate([ww,ww,ww])
                 cube([w-ww*2, d-ww*2, h]);
         }
-        bsw = $box_stand_screw_diameter + 6 + 2*ww;
-        bsh = $box_h-$box_lid_skirt;
+        
         if ($box_stand){
-            box_stand_6611BC6372B84EC5B78C8F90C1A866CB(0, 0, 0, bsh);
-            box_stand_6611BC6372B84EC5B78C8F90C1A866CB(w-bsw, 0, 0, bsh);
-            box_stand_6611BC6372B84EC5B78C8F90C1A866CB(0, d-bsw, 0, bsh);
-            box_stand_6611BC6372B84EC5B78C8F90C1A866CB(w-bsw, d-bsw, 0, bsh);
+            bsw = $box_stand_screw_diameter + 6;
+            bsh = $box_h-$box_lid_skirt-ww-t;
+            bsdx = bsw/2+ww-0.2;
+            bsdy = bsw/2+ww-0.2;
+
+            translate([bsdx,bsdy,0]) 
+                screw_stand("round", bsw, bsh, $box_stand_screw_diameter);
+            translate([w-bsdx,bsdy,0]) 
+                screw_stand("round", bsw, bsh, $box_stand_screw_diameter);
+            
+            translate([bsdx,d-bsdy,0]) 
+                screw_stand("round", bsw, bsh, $box_stand_screw_diameter);
+            translate([w-bsdx,d-bsdy,0]) 
+                screw_stand("round", bsw, bsh, $box_stand_screw_diameter);
         }
     }
     
 }
-
-module box_stand_6611BC6372B84EC5B78C8F90C1A866CB(dx, dy, dz, h)
-{
-    ww = $box_wall_thickness;
-    w = $box_stand_screw_diameter + 6;
-    r = $box_stand_screw_diameter/2;
-
-    translate([dx+ww,dy+ww,dz])
-        difference(){
-            cube([w,w,h]);
-            translate([w/2, w/2, h/2])
-                cylinder(h/2+1,r,r);
-        }
-}
-
 
