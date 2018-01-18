@@ -29,8 +29,19 @@ if (plates_demo)
     $fs = 0.1;  // Don't generate smaller facets than 0.1 mm
     $fa = 5;    // Don't generate larger angles than 5 degrees
 
-    translate([20, 0, 0]) plate_square(30, 40, 10);
-    translate([-20, 0, 0]) plate_square_rounded(30, 40, 10, 5);
+    translate([20, 30, 0]) plate_square(30, 40, 10);
+    translate([-20, 30, 0]) plate_square_rounded(30, 40, 10, 5);
+    
+    translate([-20,-30, 0])
+        difference(){
+            plate_square_rounded(30, 40, 10, 5);
+            translate([0,0,1])plate_square_rounded(28, 38, 10, 4);
+        }
+    translate([20,-30, 0])
+        difference(){
+            plate_square(30, 40, 10);
+            translate([0,0,1])plate_square(28, 38, 10);
+        }
 }
 
 module plate_square(width, depth, height)
@@ -73,6 +84,6 @@ module plate_4529794C958649EDBED3F456D2B65E87(width, depth, height, corner_radiu
         translate([0,r,0]) cube([r, d-r*2, h]);
         translate([w-r,r,0]) cube([r, d-r*2, h]);
         
-        translate([r,r,0]) cube([w-2*r,d-2*r,h]);
+        translate([r-0.1,r-0.1,0]) cube([w-2*r+0.2,d-2*r+0.2,h]);
     }
 }
