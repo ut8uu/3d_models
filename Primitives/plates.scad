@@ -21,7 +21,7 @@
 // SOFTWARE.
 
 // set the variable below to see the box in action
-plates_demo = true;
+plates_demo = false;
 
 if (plates_demo)
 {
@@ -29,8 +29,8 @@ if (plates_demo)
     $fs = 0.1;  // Don't generate smaller facets than 0.1 mm
     $fa = 5;    // Don't generate larger angles than 5 degrees
 
-    translate([30, 0, 0]) plate_square(50, 40, 10);
-    translate([-30, 0, 0]) plate_square_rounded(50, 40, 10, 10);
+    translate([20, 0, 0]) plate_square(30, 40, 10);
+    translate([-20, 0, 0]) plate_square_rounded(30, 40, 10, 5);
 }
 
 module plate_square(width, depth, height)

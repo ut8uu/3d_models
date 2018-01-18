@@ -30,7 +30,7 @@ include <screw_stand.scad>
 include <screws.scad>
 
 // set the variable below to see the box in action
-box_demo = true;
+box_demo = false;
 
 if (box_demo)
 {
