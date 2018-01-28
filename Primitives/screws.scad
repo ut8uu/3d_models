@@ -42,6 +42,20 @@ if (demo_screws){
         translate([0,0,12]) screw_hole_m4(15);
         translate([0,0,21]) screw_hole_m5(15);
     }
+    
+    translate([0, -10, 0])
+    {
+        translate([0,0,5]) screw_m3_hidden(15);
+        translate([0,0,12]) screw_m4_hidden(15);
+        translate([0,0,21]) screw_m5_hidden(15);
+    }
+    
+    translate([0, -20, 0])
+    {
+        translate([0,0,5]) screw_hole_m3_hidden(15);
+        translate([0,0,12]) screw_hole_m4_hidden(15);
+        translate([0,0,21]) screw_hole_m5_hidden(15);
+    }
 }
 
 module screw_m25(l = 5){
@@ -64,6 +78,19 @@ module screw_m5(l = 5){
     screw(2.5, 4.25, l, 3.3);
 }
 
+module screw_m3_hidden(l = 5){
+    screw_hidden(1.5, 2.75, l, 2);
+}
+
+module screw_m4_hidden(l = 5){
+    screw_hidden(2, 3.5, l, 2.6);
+}
+
+module screw_m5_hidden(l = 5){
+    screw_hidden(2.5, 4.25, l, 3.3);
+}
+
+
 // holes
 module screw_hole_m25(l=5)
 {
@@ -76,14 +103,29 @@ module screw_hole_m3(l = 5){
     screw_hole(1.5+t, 2.75+t, l, 2);
 }
 
+module screw_hole_m3_hidden(l = 5){
+    t = 0.2; // tolerance
+    screw_hole_hidden(1.5+t, 2.75+t, l, 2);
+}
+
 module screw_hole_m4(l = 5){
     t = 0.2; // tolerance
     screw_hole(2+t, 3.5+t, l, 2.6);
 }
 
+module screw_hole_m4_hidden(l = 5){
+    t = 0.2; // tolerance
+    screw_hole_hidden(2+t, 3.5+t, l, 2.6);
+}
+
 module screw_hole_m5(l = 5){
     t = 0.2; // tolerance
     screw_hole(2.5+t, 4.25+t, l, 3.3);
+}
+
+module screw_hole_m5_hidden(l = 5){
+    t = 0.2; // tolerance
+    screw_hole_hidden(2.5+t, 4.25+t, l, 3.3);
 }
 
 
@@ -108,6 +150,26 @@ module screw(r1 = 1, r2 = 2, l = 5, h = 1){
     }
 }
 
+module screw_hidden(r1 = 1, r2 = 2, l = 5, h = 1){
+    r = r1;
+    bx = h; by = r2*2+1; bz = 0.6;
+
+    color("lime")
+    rotate([45,0,0])
+    difference(){
+        union(){
+            rotate([0,90,0]) 
+                cylinder(l, r1, r1);
+            translate([l, 0, 0])
+                rotate([0,90,0])
+                    cylinder(h, r1, r2);
+        }
+        
+        translate([l+h-1,-by/2,-bz/2]) 
+            cube([bx, by, bz]);
+    }
+}
+
 module screw_hole(r1 = 1, r2 = 2, l = 5, h = 1){
     color("magenta")
     rotate([45,0,0])
@@ -118,6 +180,20 @@ module screw_hole(r1 = 1, r2 = 2, l = 5, h = 1){
             translate([l, 0, 0])
                 rotate([0,90,0])
                     cylinder(h, r2, r2);
+        }
+    }
+}
+
+module screw_hole_hidden(r1 = 1, r2 = 2, l = 5, h = 1){
+    color("magenta")
+    rotate([45,0,0])
+    difference(){
+        union(){
+            rotate([0,90,0]) 
+                cylinder(l, r1, r1);
+            translate([l, 0, 0])
+                rotate([0,90,0])
+                    cylinder(h, r1, r2);
         }
     }
 }
