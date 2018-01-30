@@ -22,7 +22,8 @@
 
 demo_field_detector = true;
 
-include <../../Primitives/box_main.scad>
+include <../../../Primitives/box_main.scad>
+include <../../../radio/antenna/connectors/connector_bnc_punch_mask.scad>
 
 // Global resolution
 $fs = 0.1;  // Don't generate smaller facets than 0.1 mm
@@ -39,10 +40,29 @@ radius = 6;
 
 difference()
 {
-    box_rounded(w,d,h,ww,stand,screw_diameter,skirt,radius);
-    translate([w+11.7+ww+7, 10+3, 0]) led_holes();
-    translate([-0.5, 20, 19.25]) rotate([0, 90, 0]) cylinder(ww+1, 3.25, 3.25);
+    // housing
+    box_rounded_x(w,d,h,ww,stand,screw_diameter,skirt,radius);
+    // led holes
+    translate() led_holes();
+    translate([1.7+ww+7, -5-10-40+3, 0]) led_holes();
+    // hole for potentiometer
+    translate([-0.5, 25, 19.25]) rotate([0, 90, 0]) cylinder(ww+1, 3.25, 3.25);
+    // hole for bnc connector
+    $wall_width = ww*3;
+    translate([ww*2, 40, 15])connector_bnc_punch_mask();
 }
+
+wh = h - 4*ww;
+bc_x = 57;
+b_x = 18; // battery thickness
+// battery compartment
+// transverse wall 
+translate([bc_x-ww, 5, ww]) cube([ww,d,wh]);
+// ribs
+translate([bc_x+b_x, 5+d/3, ww])
+cube([w-bc_x-ww-b_x, ww, wh]);
+translate([bc_x+b_x, 5+d/1.5, ww])
+cube([w-bc_x-ww-b_x, ww, wh]);
 
 module led_holes()
 {
@@ -59,4 +79,12 @@ module led_hole(dx)
 {
     translate([dx, 0, -0.5])
         cylinder(ww+1, 1.7, 1.7);
-}    
+}  
+
+module box_rounded_x(w,d,h,ww,stand,screw_diameter,skirt,radius)
+{
+    translate([0, 5, 0])
+    box_rounded_walls(w,d,h,ww,stand,screw_diameter,skirt,radius);
+    translate([0,-d-5,0])
+    box_rounded_lid(w,d,h,ww,stand,screw_diameter,skirt,radius);
+}
