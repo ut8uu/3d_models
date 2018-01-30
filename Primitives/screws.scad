@@ -1,6 +1,6 @@
 // MIT License
 
-// Copyright (c) 2018 ut8uu
+// Copyright (c) 2018 Sergey Usmanov, UT8UU
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +22,12 @@
 
 // screws and holes are placed along the axis X
 // and centered on the axis X
+
+// history of changes
+// 20.01.2018 initial commit
+// 28.01.2018 added cone head bolts and corresponding punch objects
+// 30.01.2018 removed color of punch object
+// 30.01.2018 fixed bug with incorrect bolt length
 
 demo_screws = false;
 
@@ -45,16 +51,16 @@ if (demo_screws){
     
     translate([0, -10, 0])
     {
-        translate([0,0,5]) screw_m3_hidden(15);
-        translate([0,0,12]) screw_m4_hidden(15);
-        translate([0,0,21]) screw_m5_hidden(15);
+        translate([0,0,5]) screw_m3_cone(15);
+        translate([0,0,12]) screw_m4_cone(15);
+        translate([0,0,21]) screw_m5_cone(15);
     }
     
     translate([0, -20, 0])
     {
-        translate([0,0,5]) screw_hole_m3_hidden(15);
-        translate([0,0,12]) screw_hole_m4_hidden(15);
-        translate([0,0,21]) screw_hole_m5_hidden(15);
+        translate([0,0,5]) screw_hole_m3_cone(15);
+        translate([0,0,12]) screw_hole_m4_cone(15);
+        translate([0,0,21]) screw_hole_m5_cone(15);
     }
 }
 
@@ -78,16 +84,16 @@ module screw_m5(l = 5){
     screw(2.5, 4.25, l, 3.3);
 }
 
-module screw_m3_hidden(l = 5){
-    screw_hidden(1.5, 2.75, l, 2);
+module screw_m3_cone(l = 5){
+    screw_cone(1.5, 2.75, l, 2);
 }
 
-module screw_m4_hidden(l = 5){
-    screw_hidden(2, 3.5, l, 2.6);
+module screw_m4_cone(l = 5){
+    screw_cone(2, 3.5, l, 2.6);
 }
 
-module screw_m5_hidden(l = 5){
-    screw_hidden(2.5, 4.25, l, 3.3);
+module screw_m5_cone(l = 5){
+    screw_cone(2.5, 4.25, l, 3.3);
 }
 
 
@@ -103,9 +109,9 @@ module screw_hole_m3(l = 5){
     screw_hole(1.5+t, 2.75+t, l, 2);
 }
 
-module screw_hole_m3_hidden(l = 5){
+module screw_hole_m3_cone(l = 5){
     t = 0.2; // tolerance
-    screw_hole_hidden(1.5+t, 2.75+t, l, 2);
+    screw_hole_cone(1.5+t, 2.75+t, l, 2);
 }
 
 module screw_hole_m4(l = 5){
@@ -113,9 +119,9 @@ module screw_hole_m4(l = 5){
     screw_hole(2+t, 3.5+t, l, 2.6);
 }
 
-module screw_hole_m4_hidden(l = 5){
+module screw_hole_m4_cone(l = 5){
     t = 0.2; // tolerance
-    screw_hole_hidden(2+t, 3.5+t, l, 2.6);
+    screw_hole_cone(2+t, 3.5+t, l, 2.6);
 }
 
 module screw_hole_m5(l = 5){
@@ -123,15 +129,16 @@ module screw_hole_m5(l = 5){
     screw_hole(2.5+t, 4.25+t, l, 3.3);
 }
 
-module screw_hole_m5_hidden(l = 5){
+module screw_hole_m5_cone(l = 5){
     t = 0.2; // tolerance
-    screw_hole_hidden(2.5+t, 4.25+t, l, 3.3);
+    screw_hole_cone(2.5+t, 4.25+t, l, 3.3);
 }
 
 
 
 module screw(r1 = 1, r2 = 2, l = 5, h = 1){
     r = r1;
+    l = l - h;
     bx = h; by = r2*2+1; bz = 0.6;
 
     color("lime")
@@ -150,8 +157,9 @@ module screw(r1 = 1, r2 = 2, l = 5, h = 1){
     }
 }
 
-module screw_hidden(r1 = 1, r2 = 2, l = 5, h = 1){
+module screw_cone(r1 = 1, r2 = 2, l0 = 5, h = 1){
     r = r1;
+    l = l0 - h;
     bx = h; by = r2*2+1; bz = 0.6;
 
     color("lime")
@@ -170,8 +178,8 @@ module screw_hidden(r1 = 1, r2 = 2, l = 5, h = 1){
     }
 }
 
-module screw_hole(r1 = 1, r2 = 2, l = 5, h = 1){
-    color("magenta")
+module screw_hole(r1 = 1, r2 = 2, l0 = 5, h = 1){
+    l = l0 - h;
     rotate([45,0,0])
     difference(){
         union(){
@@ -184,16 +192,11 @@ module screw_hole(r1 = 1, r2 = 2, l = 5, h = 1){
     }
 }
 
-module screw_hole_hidden(r1 = 1, r2 = 2, l = 5, h = 1){
-    color("magenta")
+module screw_hole_cone(r1 = 1, r2 = 2, l = 5, h = 1){
+    l = l - h;
     rotate([45,0,0])
-    difference(){
-        union(){
-            rotate([0,90,0]) 
-                cylinder(l, r1, r1);
-            translate([l, 0, 0])
-                rotate([0,90,0])
-                    cylinder(h, r1, r2);
-        }
+    union(){
+        rotate([0,90,0]) cylinder(l+0.1, r1, r1);
+        translate([l, 0, 0]) rotate([0,90,0]) cylinder(h, r1, r2);
     }
 }

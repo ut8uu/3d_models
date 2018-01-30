@@ -1,6 +1,6 @@
 // MIT License
 
-// Copyright (c) 2018 ut8uu
+// Copyright (c) 2018 Sergey Usmanov, UT8UU
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,6 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// history of changes
+// 20.01.2018 initial commit
+// 30.01.2018 fixed location of stands
+// 30.01.2018 holes for bolts changed to cone head bolts 
+
 include <screw_stand.scad>
 include <screws.scad>
 include <plates.scad>
@@ -36,7 +41,7 @@ if (box_demo)
     h = 20;
     w = 50;
     d = 60;
-    ww = 1;
+    ww = 2;
     stand = true;
     screw_diameter = 3;
     skirt = 3;
@@ -75,11 +80,10 @@ module box_rounded_walls(w,d,h,ww,stand,screw_diameter,skirt,radius)
         if (stand){
             bsw = screw_diameter + 6;
             bsh = h-skirt-ww-t;
-            bsdx = bsw/2+ww*2;
-            bsdy = bsw/2+ww*2;
+            bsdx = bsw/2+ww;
+            bsdy = bsw/2+ww;
 
-            translate([bsdx,bsdy,0]) 
-                screw_stand("round", bsw, bsh, screw_diameter);
+            translate([bsdx,bsdy,0]) screw_stand("round", bsw, bsh, screw_diameter);
             translate([w-bsdx,bsdy,0]) 
                 screw_stand("round", bsw, bsh, screw_diameter);
             
@@ -132,7 +136,7 @@ module box_rounded_lid(w,d,h,ww,stand,screw_diameter,skirt,radius)
             }
             if (stand)
             {
-                holes_in_lid(bsw,w,d,h,ww,screw_diameter,skirt,delta);
+                holes_in_lid(bsw,w,d,h+0.1,ww,screw_diameter,skirt,delta);
             }
         }
 }
@@ -143,6 +147,8 @@ module box_square_lid(w,d,h,ww,stand,screw_diameter,skirt)
     h2 = skirt;
     t = 0.1; // tolerance
     bsw = screw_diameter + 6;
+    bsdx = bsw/2+ww+t;
+    bsdy = bsw/2+ww+t;
 
     bsh = h2-t; // box stand height
 
@@ -162,23 +168,23 @@ module box_square_lid(w,d,h,ww,stand,screw_diameter,skirt)
                     }
                 }
                 if (stand){
-                    bsdx = bsw/2+ww+t;
-                    bsdy = bsw/2+ww+t;
 
                     translate([bsdx,bsdy,0]) 
                         screw_stand("round", bsw, bsh+ww, screw_diameter);
+
                     translate([w-bsdx,bsdy,0]) 
                         screw_stand("round", bsw, bsh+ww, screw_diameter);
                     
                     translate([bsdx,d-bsdy,0]) 
                         screw_stand("round", bsw, bsh+ww, screw_diameter);
+
                     translate([w-bsdx,d-bsdy,0]) 
                         screw_stand("round", bsw, bsh+ww, screw_diameter);
                 }
             }
             if (stand)
             {
-                holes_in_lid(bsw,w,d,h,ww,screw_diameter,skirt,0);
+                holes_in_lid(bsw,w,d,h+0.1,ww,screw_diameter,skirt,0);
             }
         }
     }
@@ -187,14 +193,22 @@ module box_square_lid(w,d,h,ww,stand,screw_diameter,skirt)
 module holes_in_lid(bsw,w,d,h,ww,screw_diameter,skirt,delta)
 {
     t = 0.1;
+    hl = 20;
     
     bsdx = bsw/2+ww+t+delta;
     bsdy = bsw/2+ww+t+delta;
     
-    translate([bsdx, bsdy, -1]) hole_for_screw_head(ww,screw_diameter,10);
-    translate([w-bsdx, bsdy, -1]) hole_for_screw_head(ww,screw_diameter,skirt);
-    translate([bsdx, d-bsdy, -1]) hole_for_screw_head(ww,screw_diameter,skirt);
-    translate([w-bsdx, d-bsdy, -1]) hole_for_screw_head(ww,screw_diameter,skirt);
+    translate([bsdx,bsdy,hl-2*t]) rotate([0, 90, 0]) screw_hole_m3_cone(hl);
+    //translate([bsdx,bsdy,2-t]) rotate([0, 90, 0]) screw_hole_m3_cone(hole_lenght);
+    translate([w-bsdx,bsdy,hl-2*t]) rotate([0, 90, 0]) screw_hole_m3_cone(hl);
+    translate([bsdx,d-bsdy,hl-2*t]) rotate([0, 90, 0]) screw_hole_m3_cone(hl);
+    translate([w-bsdx,d-bsdy,hl-2*t]) rotate([0, 90, 0]) screw_hole_m3_cone(hl);
+
+    
+    //translate([bsdx, bsdy, -1]) hole_for_screw_head(ww,screw_diameter,skirt);
+    //translate([w-bsdx, bsdy, -1]) hole_for_screw_head(ww,screw_diameter,skirt);
+    //translate([bsdx, d-bsdy, -1]) hole_for_screw_head(ww,screw_diameter,skirt);
+    //translate([w-bsdx, d-bsdy, -1]) hole_for_screw_head(ww,screw_diameter,skirt);
 }
 
 module hole_for_screw_head(head_height,screw_diameter,rod_height)
