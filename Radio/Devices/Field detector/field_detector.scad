@@ -30,8 +30,8 @@ $fs = 0.1;  // Don't generate smaller facets than 0.1 mm
 $fa = 5;    // Don't generate larger angles than 5 degrees
 
 h = 30;
-w = 85;
-d = 60;
+w = 95;
+d = 70;
 ww = 2;
 stand = true;
 screw_diameter = 3;
@@ -43,17 +43,16 @@ difference()
     // housing
     box_rounded_x(w,d,h,ww,stand,screw_diameter,skirt,radius);
     // led holes
-    translate() led_holes();
-    translate([1.7+ww+7, -5-10-40+3, 0]) led_holes();
+    translate([1.7+ww+7, -5-15-40+3, 0]) led_holes();
     // hole for potentiometer
-    translate([-0.5, 25, 19.25]) rotate([0, 90, 0]) cylinder(ww+1, 3.25, 3.25);
+    translate([-0.5, 30, 19.25]) rotate([0, 90, 0]) cylinder(ww+1, 3.25, 3.25);
     // hole for bnc connector
     $wall_width = ww*3;
-    translate([ww*2, 40, 15])connector_bnc_punch_mask();
+    translate([ww*2, 50, 15])connector_bnc_punch_mask();
 }
 
 wh = h - 4*ww;
-bc_x = 57;
+bc_x = 67;
 b_x = 18; // battery thickness
 // battery compartment
 // transverse wall 
