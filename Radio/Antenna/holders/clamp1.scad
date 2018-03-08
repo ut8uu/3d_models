@@ -25,13 +25,13 @@
 $fs = 0.1;  // Don't generate smaller facets than 0.1 mm
 $fa = 5;    // Don't generate larger angles than 5 degrees
 
-demo_clamp1 = true;
+demo_clamp1 = false;
 
 include <../../../primitives/screws.scad>
 
 if (demo_clamp1)
 {
-    clamp1(3, 20, 55, 2, 2);
+    clamp1(3, 20, 55, 3, 2);
 }
 
 // r - radius of element
@@ -51,10 +51,8 @@ module clamp1(r, h, w, wt, n)
         difference()
         {
           cube([h, w, wtx2+2]);
-          translate([-h+1, 12, -wt+1])
-            cube([h*2, w, wt*2]);
-          translate([-h/2, -w/2, wt])
-            cube([h*2, w*2, 2]);
+          translate([-h+1, 12, -wt+1]) cube([h*2, w, wt*2]);
+          translate([-h/2, 0, wt]) cube([h*2, w*2, 2]);
         }
       translate([-h/2, 0, 0])
         rotate([0, 90, 0])
@@ -65,19 +63,18 @@ module clamp1(r, h, w, wt, n)
           cylinder(h*2, r, r);
           }
         }
-        translate([-h/2-1, -1, -wt/2])
-          cube([h*2+1, w, 2]);
+        translate([-h/2-1, -1, -1]) cube([h*2+1, w, 2]);
         
         translate([-15/2+2, 105/2, -6.3])
           rotate([0,270,0])
-            screw_hole_m3_cone(10);
+            screw_hole_m3_cone(wt*10);
         
         translate([15/2-2, 105/2, -6.3])
           rotate([0,270,0])
-            screw_hole_m3_cone(10);
+            screw_hole_m3_cone(wt*10);
         
-        translate([0, 18/2, -5])
+        translate([0, 18/2, -wt*2])
           rotate([0,270,0])
-            screw_hole_m3_cone(10);
+            screw_hole_m3_cone(wt*20);
     }
 }
