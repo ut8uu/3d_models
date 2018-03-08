@@ -31,15 +31,14 @@ include <../../../primitives/screws.scad>
 
 if (demo_clamp1)
 {
-    clamp1(3, 20, 55, 3, 2);
+    clamp1(3, 20, 55, 3);
 }
 
 // r - radius of element
 // h - height of the clamp
 // w - width of the flat part
 // wt - wall thickness
-// n - number of holes for screws
-module clamp1(r, h, w, wt, n)
+module clamp1(r, h, w, wt)
 {
     wtx2 = wt*2;
     
@@ -65,16 +64,20 @@ module clamp1(r, h, w, wt, n)
         }
         translate([-h/2-1, -1, -1]) cube([h*2+1, w, 2]);
         
-        translate([-15/2+2, 105/2, -6.3])
-          rotate([0,270,0])
-            screw_hole_m3_cone(wt*10);
+        bolt_x = h/2-5;
+        bolt_y = w + r - 5;
+        bolt_z = wt + 1;
+        bolt_h = wt * 2 + 4;
         
-        translate([15/2-2, 105/2, -6.3])
-          rotate([0,270,0])
-            screw_hole_m3_cone(wt*10);
+        translate([-bolt_x, bolt_y, -bolt_z])
+          rotate([0,270,0]) screw_hole_m3_cone(bolt_h);
         
-        translate([0, 18/2, -wt*2])
-          rotate([0,270,0])
-            screw_hole_m3_cone(wt*20);
+        translate([bolt_x, bolt_y, -bolt_z])
+          rotate([0,270,0]) screw_hole_m3_cone(bolt_h);
+        
+        bolt2_y = 1.5 * r - r/wt + 6;
+        
+        translate([0, bolt2_y, -wt*2])
+          rotate([0,270,0]) screw_hole_m3_cone(bolt_h * 2);
     }
 }
