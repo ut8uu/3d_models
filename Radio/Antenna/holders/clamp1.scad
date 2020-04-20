@@ -25,13 +25,13 @@
 $fs = 0.1;  // Don't generate smaller facets than 0.1 mm
 $fa = 5;    // Don't generate larger angles than 5 degrees
 
-demo_clamp1 = false;
+demo_clamp1 = true;
 
 include <../../../primitives/screws.scad>
 
 if (demo_clamp1)
 {
-    clamp1(3, 20, 55, 3);
+    clamp1(3, 10, 55, 3);
 }
 
 // r - radius of element
